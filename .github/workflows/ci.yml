@@ -33,6 +33,29 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             build
 
+  server-build:
+    name: Build ys-server (Qt 6.8, Debian trixie)
+    runs-on: ubuntu-latest
+    container: debian:trixie
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Qt 6.8 and build tools
+        run: |
+          apt-get update -qq
+          DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
+            cmake ninja-build g++ qt6-base-dev qt6-httpserver-dev \
+            qt6-websockets-dev libqt6sql6-sqlite
+
+      - name: Configure and build
+        working-directory: server
+        run: |
+          cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+          cmake --build build
+
+      - name: Check pipeline script syntax
+        run: bash -n server/pipeline/run_job.sh
+
   spike-syntax:
     name: Python spike syntax check
     runs-on: ubuntu-latest

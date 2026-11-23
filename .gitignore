@@ -7,3 +7,5 @@ __pycache__/
 spike/board/
 spike/data/
 spike/runs/
+# Local CMake builds
+server/build/

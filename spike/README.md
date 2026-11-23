@@ -47,10 +47,10 @@ intrinsics and ruins the test.
 Convert HEIC to JPEG for the pipeline (the spike scripts read JPEG/PNG) with:
 `magick mogrify -format jpg *.HEIC` or `heif-convert`.
 
-## Running it on Harris
+## Running it on a GPU host
 
-Harris has the RTX 2080 Super and Docker with the NVIDIA runtime. The working
-directory is `/mnt/user/appdata/youscan/spike`. Build the image there, then
+Any Linux host with an NVIDIA GPU and Docker with the NVIDIA runtime works
+(tested: RTX 2080 Super, 8 GB). Copy `spike/` to a working directory, build the image there, then
 run the tools with `--gpus all` and a memory cap so the host stays responsive:
 
 ```sh
@@ -70,7 +70,7 @@ docker run --rm --gpus all --memory 20g -v $PWD:/spike youscan-spike \
 
 ## Status (synthetic plumbing test)
 
-Run on Harris (`youscan-spike` image, RTX 2080 Super). Synthetic views, 30 frames,
+Run on a GPU host (`youscan-spike` image, RTX 2080 Super). Synthetic views, 30 frames,
 no lens distortion, no focus blur, fixed intrinsics in COLMAP.
 
 | Check | Result |
@@ -83,6 +83,6 @@ no lens distortion, no focus blur, fixed intrinsics in COLMAP.
 These numbers only show the math and plumbing are right. They are not evidence about
 the phone. The real test needs photos of the printed board from the 1× lens.
 
-Harris notes: COLMAP 4 renamed the GPU/size options to `FeatureExtraction.*`
+GPU-host notes: COLMAP 4 renamed the GPU/size options to `FeatureExtraction.*`
 and `FeatureMatching.*`. SIFT-GPU fails on 4032 px images, so extraction is capped at
 3200 px. Keep that cap unless the spike shows it costs accuracy.
