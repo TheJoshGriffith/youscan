@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  ios-build:
+    name: Build iOS app (no signing)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Generate Xcode project
+        working-directory: ios
+        run: xcodegen generate
+
+      - name: Show toolchain
+        run: xcodebuild -version
+
+      - name: Build for generic iOS device
+        working-directory: ios
+        run: |
+          xcodebuild \
+            -project YouScan.xcodeproj \
+            -scheme YouScan \
+            -destination 'generic/platform=iOS' \
+            -configuration Debug \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+  spike-syntax:
+    name: Python spike syntax check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile spike scripts
+        run: python -m py_compile spike/*.py
